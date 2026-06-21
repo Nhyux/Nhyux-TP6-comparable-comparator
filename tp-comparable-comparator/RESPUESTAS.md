@@ -23,3 +23,9 @@
 ### Pregunta 4: Explicá con tus palabras qué es un overflow de enteros, por qué el "truco de la resta" lo provoca, qué parte del contrato de `Comparator` rompe, y por qué `Integer.compare()` no sufre este problema.
 
 **Respuesta:** Un overflow de enteros ocurre cuando una operación aritmética produce un valor numérico que excede el límite máximo o mínimo que el tipo de dato (`int` de 32 bits en Java) puede representar, provocando que el valor "de la vuelta" y se transforme en un número con el signo opuesto. El "truco de la resta" provoca esto al restar un número negativo a uno extremadamente grande (ej. `Integer.MAX_VALUE - (-1)`), lo que resulta en un valor negativo inválido. Esto rompe el contrato de `Comparator` porque el método devuelve un signo erróneo, invirtiendo la relación lógica de orden. `Integer.compare()` no sufre este problema porque no realiza una resta; en su lugar, utiliza evaluaciones relacionales directas (`<`, `>`) para determinar cuál operando es mayor, retornando de forma segura `-1`, `0` o `1`.
+
+## Parte 4 — Integración con Spring Boot
+
+### Pregunta 5: ¿Qué patrón de diseño estás aplicando al usar un `Map<String, Comparator<T>>` en lugar de un `switch`? Explicá cómo se relaciona este patrón con el polimorfismo y por qué es preferible a la alternativa procedural.
+
+**Respuesta:** Al mapear identificadores de texto a comparadores específicos se está aplicando el patrón de diseño **Strategy**. Este patrón encapsula algoritmos de ordenamiento intercambiables delegando el comportamiento en abstracciones polimórficas (las implementaciones de `Comparator`). Es preferible a una estructura procedural (`switch` o concatenación de `if-else`) porque desacopla el núcleo del servicio de la lógica condicional, garantizando el cumplimiento del principio Abierto/Cerrado (OCP). Agregar un nuevo criterio en el futuro requerirá añadir una nueva entrada al mapa en lugar de intervenir y modificar bloques lógicos estructurados existentes.
