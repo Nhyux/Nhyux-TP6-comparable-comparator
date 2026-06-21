@@ -1,8 +1,12 @@
 package ar.edu.unlar.prog3.tp_comparable_comparator;
 
 import ar.edu.unlar.prog3.tp_comparable_comparator.model.Estudiante;
+import ar.edu.unlar.prog3.tp_comparable_comparator.comparator.EstudiantePorMateriasAprobadasComparator;
+import ar.edu.unlar.prog3.tp_comparable_comparator.comparator.EstudiantePorNombreComparator;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class PruebaOrdenamiento {
@@ -19,16 +23,48 @@ public class PruebaOrdenamiento {
         estudiantes.add(new Estudiante("LU-2024-009", "Tomás Sosa", 6.5, 20, 12));
         estudiantes.add(new Estudiante("LU-2024-010", "Lucía Fernández", 7.8, 21, 16));
 
-        System.out.println("Antes:");
-        for (Estudiante e : estudiantes) {
-            System.out.println(e);
-        }
+        System.out.println("--- EJERCICIO 4: COMPARATORS CLÁSICOS ---");
+        estudiantes.sort(new EstudiantePorMateriasAprobadasComparator());
+        System.out.println("\nPor Materias Aprobadas (Asc):");
+        estudiantes.forEach(System.out::println);
 
-        Collections.sort(estudiantes);
+        estudiantes.sort(new EstudiantePorNombreComparator());
+        System.out.println("\nPor Nombre Alfabetico:");
+        estudiantes.forEach(System.out::println);
 
-        System.out.println("\nDespués:");
-        for (Estudiante e : estudiantes) {
-            System.out.println(e);
-        }
+        System.out.println("\n--- EJERCICIO 5: COMPARATORS MODERNOS---");
+        Comparator<Estudiante> porEdadLambda = (e1, e2) -> Integer.compare(e1.getEdad(), e2.getEdad());
+        estudiantes.sort(porEdadLambda);
+        System.out.println("\nPor Edad (Lambda):");
+        estudiantes.forEach(System.out::println);
+
+        Comparator<Estudiante> porMateriasMethodRef = Comparator.comparing(Estudiante::getCantidadMateriasAprobadas);
+        estudiantes.sort(porMateriasMethodRef);
+
+        Comparator<Estudiante> compuesto = Comparator.comparing(Estudiante::getPromedio).reversed()
+                .thenComparing(Estudiante::getNombre);
+        estudiantes.sort(compuesto);
+        System.out.println("\nCompuesto (Promedio Desc, Nombre Asc en empates):");
+        estudiantes.forEach(System.out::println);
+
+        Comparator<Estudiante> promedioAscendente = Comparator.comparing(Estudiante::getPromedio);
+        estudiantes.sort(promedioAscendente);
+        System.out.println("\nPromedio Inverso (Ascendente):");
+        estudiantes.forEach(System.out::println);
+
+        System.out.println("\n--- EJERCICIO 6: ANTI-PATRÓN DE LA RESTA ---");
+        List<Estudiante> estudiantesOverflow = new ArrayList<>();
+        estudiantesOverflow.add(new Estudiante("LU-X", "Estudiante Max", 10.0, Integer.MAX_VALUE, 20));
+        estudiantesOverflow.add(new Estudiante("LU-Y", "Estudiante Negativo", 10.0, -1, 20));
+
+        Comparator<Estudiante> restaTramposa = (e1, e2) -> e1.getEdad() - e2.getEdad();
+        estudiantesOverflow.sort(restaTramposa);
+        System.out.println("\nResultado con Resta Tramposa (Incorrecto por Overflow):");
+        estudiantesOverflow.forEach(System.out::println);
+
+        Comparator<Estudiante> correctorSuficiente = (e1, e2) -> Integer.compare(e1.getEdad(), e2.getEdad());
+        estudiantesOverflow.sort(correctorSuficiente);
+        System.out.println("\nResultado con Integer.compare() (Correcto):");
+        estudiantesOverflow.forEach(System.out::println);
     }
 }

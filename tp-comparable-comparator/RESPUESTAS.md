@@ -17,3 +17,9 @@
 ### Pregunta 3: `Comparable` nos ata a un único criterio de ordenamiento. ¿Qué problemas de diseño introduce esto si nuestro sistema necesitara ordenar la misma lista de estudiantes de 4 formas distintas según el contexto? Relacioná tu respuesta con los principios de responsabilidad única (SRP) y abierto/cerrado (OCP).
 
 **Respuesta:** Centralizar múltiples formas de ordenamiento dentro de la entidad quiebra el principio SRP, puesto que la clase acumularía diversas responsabilidades de comparación cambiantes. Del mismo modo, altera el principio OCP, dado que incorporar o variar los criterios nos obligaría a modificar constantemente el código de la clase `Estudiante` en lugar de extender las funcionalidades mediante módulos externos e independientes.
+
+## Parte 3
+
+### Pregunta 4: Explicá con tus palabras qué es un overflow de enteros, por qué el "truco de la resta" lo provoca, qué parte del contrato de `Comparator` rompe, y por qué `Integer.compare()` no sufre este problema.
+
+**Respuesta:** Un overflow de enteros ocurre cuando una operación aritmética produce un valor numérico que excede el límite máximo o mínimo que el tipo de dato (`int` de 32 bits en Java) puede representar, provocando que el valor "de la vuelta" y se transforme en un número con el signo opuesto. El "truco de la resta" provoca esto al restar un número negativo a uno extremadamente grande (ej. `Integer.MAX_VALUE - (-1)`), lo que resulta en un valor negativo inválido. Esto rompe el contrato de `Comparator` porque el método devuelve un signo erróneo, invirtiendo la relación lógica de orden. `Integer.compare()` no sufre este problema porque no realiza una resta; en su lugar, utiliza evaluaciones relacionales directas (`<`, `>`) para determinar cuál operando es mayor, retornando de forma segura `-1`, `0` o `1`.
